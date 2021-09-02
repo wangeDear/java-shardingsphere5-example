@@ -1,0 +1,74 @@
+server:
+  port: 5003
+
+spring:
+  shardingsphere:
+    enabled: true
+    datasource:
+      names: ds-0,ds-1
+      ds-0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/ds-0?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: 123456
+
+      ds-1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/ds-1?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: 123456
+
+    rules:
+      sharding:
+        binding-tables:
+          - t_order,t_order_item
+        broadcast-tables:
+          - t_config
+        default-database-strategy:
+          standard:
+            sharding-algorithm-name: database-inline
+            sharding-column: order_id
+        keyGenerators:
+          snowflake:
+            type: SNOWFLAKE
+            props:
+              worker-id: 123
+        sharding-algorithms:
+          database-inline:
+            props:
+              algorithm-expression: ds-$->{order_id % 2}
+            type: INLINE
+          t-order-inline:
+            props:
+              algorithm-expression: t_order_$->{order_id % 2}
+            type: INLINE
+          t-order-item-inline:
+            props:
+              algorithm-expression: t_order_item_$->{item_id % 2}
+            type: INLINE
+        tables:
+          t_order:
+            actual-data-nodes: ds-$->{0..1}.t_order_$->{0..1}
+            keyGenerateStrategy:
+              column: order_id
+              keyGeneratorName: snowflake
+            table-strategy:
+              standard:
+                sharding-algorithm-name: t-order-inline
+                sharding-column: order_id
+          t_order_item:
+            actual-data-nodes: ds-$->{0..1}.t_order_item_$->{0..1}
+            keyGenerateStrategy:
+              column: item_id
+              keyGeneratorName: snowflake
+            table-strategy:
+              standard:
+                sharding-algorithm-name: t-order-item-inline
+                sharding-column: item_id
+
+    props:
+      sql:
+        show: true
+

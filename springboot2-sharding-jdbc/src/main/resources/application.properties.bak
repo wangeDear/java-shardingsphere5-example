@@ -1,0 +1,23 @@
+server.port=5003
+spring.shardingsphere.enabled=true
+spring.shardingsphere.datasource.names=ds-0,ds-1
+spring.shardingsphere.datasource.ds-0.type=com.alibaba.druid.pool.DruidDataSource
+spring.shardingsphere.datasource.ds-0.driverClassName=com.mysql.jdbc.Driver
+spring.shardingsphere.datasource.ds-0.url=jdbc:mysql://127.0.0.1:3306/ds-0?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+spring.shardingsphere.datasource.ds-0.username=root
+spring.shardingsphere.datasource.ds-0.password=123456
+spring.shardingsphere.datasource.ds-1.type=com.alibaba.druid.pool.DruidDataSource
+spring.shardingsphere.datasource.ds-1.driverClassName=com.mysql.jdbc.Driver
+spring.shardingsphere.datasource.ds-1.url=jdbc:mysql://127.0.0.1:3306/ds-1?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+spring.shardingsphere.datasource.ds-1.username=root
+spring.shardingsphere.datasource.ds-1.password=123456
+spring.shardingsphere.com.example.sharding.tables.t_order.actual-data-nodes=ds-$->{0..1}.t_order_$->{0..2}
+spring.shardingsphere.com.example.sharding.tables.t_order.database-strategy.inline.com.example.sharding-column=order_id
+spring.shardingsphere.com.example.sharding.tables.t_order.database-strategy.inline.algorithm-expression=ds-$->{order_id % 2}
+spring.shardingsphere.com.example.sharding.tables.t_order.table-strategy.inline.com.example.sharding-column=order_id
+spring.shardingsphere.com.example.sharding.tables.t_order.table-strategy.inline.algorithm-expression=t_order_$->{order_id % 3}
+spring.shardingsphere.com.example.sharding.tables.t_order.key-generator.column=order_id
+spring.shardingsphere.com.example.sharding.tables.t_order.key-generator.type=SNOWFLAKE
+spring.shardingsphere.com.example.sharding.binding-tables=t_order,t_order_item
+spring.shardingsphere.com.example.sharding.broadcast-tables=t_config
+spring.shardingsphere.props.sql.show=true
