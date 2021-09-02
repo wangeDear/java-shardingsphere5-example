@@ -1,4 +1,4 @@
-package com.example.sharding.domain;
+package com.example.spring.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
